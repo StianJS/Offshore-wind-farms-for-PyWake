@@ -209,7 +209,7 @@ BorsseleWfz().plot_wd_distribution(n_wd=12);
 plt.title('Wind rose')
 
 """
-Here the AEP of the model is calculated using the NOJ wake deficit model.
+Here the AEP and wake losses of the model is calculated using the NOJ wake deficit model.
 """
 from py_wake import NOJ
 windTurbines1 = SG8_167()
@@ -221,3 +221,12 @@ noj2 = NOJ(site2,windTurbines2)
 noj = noj2 and noj1
 simulationResult = noj(wt_x,wt_y)
 print ("Total AEP of the Borssele wind farm zone: %f GWh"%simulationResult.aep().sum())
+wf_model = noj
+x, y = wt_x, wt_y
+sim_res = wf_model(x,y)
+sim_res
+sim_res.aep()
+aep_with_wake_loss = sim_res.aep().sum().data
+aep_witout_wake_loss = sim_res.aep(with_wake_loss=False).sum().data
+wake_loss = aep_witout_wake_loss - aep_with_wake_loss
+print('wake loss: %f'%wake_loss, 'GWh per year')
