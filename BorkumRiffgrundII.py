@@ -118,7 +118,7 @@ BorkumRiffgrund2().plot_wd_distribution(n_wd=12);
 plt.title('Wind rose')
 
 """
-Here the AEP of the model is calculated using the NOJ wake deficit model.
+Here the AEP and wake losses of the model is calculated using the NOJ wake deficit model.
 """
 from py_wake import NOJ
 windTurbines = V164()
@@ -127,3 +127,16 @@ noj = NOJ(site,windTurbines)
 simulationResult = noj(wt_x,wt_y)
 simulationResult.aep
 print ("Total AEP of Borkum Riffgrund II: %f GWh"%simulationResult.aep().sum())
+wf_model = NOJ(site, windTurbines)
+sim_res = wf_model(x, y, # wind turbine positions
+                   h=None, # wind turbine heights(defaults to the heights defined in windTurbines)
+                   type=0, # Wind turbine types
+                   wd=None,# Wind direction
+                   ws=None,# Wind speed
+                  )
+sim_res
+sim_res.aep()
+aep_with_wake_loss = sim_res.aep().sum().data
+aep_witout_wake_loss = sim_res.aep(with_wake_loss=False).sum().data
+wake_loss = aep_witout_wake_loss - aep_with_wake_loss
+print('wake loss: %f'%wake_loss, 'GWh per year')
